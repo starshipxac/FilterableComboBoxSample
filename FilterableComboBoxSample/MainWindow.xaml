@@ -1,0 +1,75 @@
+<Window x:Class="FilterableComboBoxSample.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:FilterableComboBoxSample.Controls"
+        xmlns:viewmodels="clr-namespace:FilterableComboBoxSample.ViewModels"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=viewmodels:MainViewModel}"
+        Title="Filterable ComboBox Sample"
+        Width="640"
+        Height="420"
+        MinWidth="480"
+        MinHeight="320"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="32">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="24" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="12" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="28" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="12"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel>
+            <TextBlock FontSize="26"
+                       FontWeight="SemiBold"
+                       Text="都道府県を選択" />
+            <TextBlock Margin="0,8,0,0"
+                       Foreground="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"
+                       Text="文字を入力すると、候補が部分一致で絞り込まれます。" />
+        </StackPanel>
+
+        <TextBlock Grid.Row="2"
+                   Margin="0,0,0,8"
+                   FontWeight="SemiBold"
+                   Text="都道府県" />
+
+        <controls:FilterableComboBox x:Name="PrefectureComboBox"
+                                     Grid.Row="4"
+                                     Width="360"
+                                     HorizontalAlignment="Left"
+                                     AutomationProperties.HelpText="名前の一部を入力して候補を絞り込めます"
+                                     AutomationProperties.Name="都道府県"
+                                     ItemsSource="{Binding Prefectures}"
+                                     SelectedItem="{Binding SelectedPrefecture.Value}"
+                                     MaxDropDownHeight="240"
+                                     SelectionChanged="OnPrefectureSelectionChanged"/>
+
+        <TextBlock Grid.Row="6"
+                   Foreground="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}">
+            <Run Text="候補: " />
+            <Run Text="{Binding ElementName=PrefectureComboBox, Path=FilteredItemCount, Mode=OneWay}" />
+            <Run Text=" 件" />
+        </TextBlock>
+
+        <Border Grid.Row="6"
+                Margin="0,36,0,0"
+                Padding="16"
+                Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+                CornerRadius="6">
+            <TextBlock x:Name="SelectionText"
+                       Text="まだ選択されていません。"
+                       TextWrapping="Wrap" />
+        </Border>
+
+        <Border Grid.Row="8">
+            <TextBlock Text="{Binding SelectedPrefecture.Value}"/>
+        </Border>
+    </Grid>
+</Window>
