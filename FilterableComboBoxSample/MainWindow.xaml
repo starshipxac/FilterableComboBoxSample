@@ -11,8 +11,9 @@
         Width="640"
         Height="420"
         MinWidth="480"
-        MinHeight="320"
-        WindowStartupLocation="CenterScreen">
+        MinHeight="500"
+        WindowStartupLocation="CenterScreen"
+        LayoutUpdated="Window_LayoutUpdated">
     <Grid Margin="32">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -24,6 +25,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="12"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <StackPanel>
@@ -71,5 +73,47 @@
         <Border Grid.Row="8">
             <TextBlock Text="{Binding SelectedPrefecture.Value}"/>
         </Border>
+
+        <Grid Grid.Row="9"
+              ColumnDefinitions="*,Auto">
+            <ScrollViewer x:Name="ValuesScrollViewer"
+                          Grid.Column="0"
+                          HorizontalScrollBarVisibility="Disabled"
+                          VerticalScrollBarVisibility="Hidden"
+                          SizeChanged="ValuesScrollViewer_SizeChanged"
+                          ScrollChanged="ValuesScrollViewer_ScrollChanged">
+                <ItemsControl x:Name="ValuesItemsControl"
+                              ItemsSource="{Binding ValuesView}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Vertical" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Width" Value="Auto" />
+                            <Setter Property="Height" Value="32" />
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="Gray"
+                                BorderThickness="1"
+                                Margin="0"
+                                Padding="0">
+                                <TextBox Text="{Binding Current.Value, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                     Margin="0"
+                                     Padding="5"
+                                     BorderThickness="0"/>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+            <ScrollBar x:Name="VerticalScrollBar"
+                       Grid.Column="1"
+                       Orientation="Vertical"
+                       Scroll="VerticalScrollBar_Scroll"/>
+        </Grid>
     </Grid>
 </Window>

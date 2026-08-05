@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using ObservableCollections;
 using R3;
+using ScrollViewerBringIntoViewSample.ViewModels;
 
 namespace FilterableComboBoxSample.ViewModels;
 
@@ -10,13 +11,19 @@ public class MainViewModel : ObservableObject
     {
         this.Prefectures = [];
         this.Prefectures.AddRange(GetPrefectures());
-
         this.SelectedPrefecture = new BindableReactiveProperty<string>(String.Empty);
+
+        this.ValuesView = this.Values.ToNotifyCollectionChanged(
+            SynchronizationContextCollectionEventDispatcher.Current);
+        this.Values.AddRange(GetValues());
     }
 
     public ObservableList<string> Prefectures { get; init; }
 
     public BindableReactiveProperty<string> SelectedPrefecture { get; init; }
+
+    private ObservableList<ValueViewModel> Values { get; init; } = [];
+    public NotifyCollectionChangedSynchronizedViewList<ValueViewModel> ValuesView { get; init; }
 
     private IEnumerable<string> GetPrefectures()
     {
@@ -71,4 +78,11 @@ public class MainViewModel : ObservableObject
         ];
     }
 
+    private IEnumerable<ValueViewModel> GetValues()
+    {
+        foreach (var value in Enumerable.Range(1, 100))
+        {
+            yield return new ValueViewModel(value);
+        }
+    }
 }

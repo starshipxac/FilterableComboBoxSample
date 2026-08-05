@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using FilterableComboBoxSample.ViewModels;
@@ -6,67 +7,55 @@ namespace FilterableComboBoxSample;
 
 public partial class MainWindow : Window
 {
-    //public IReadOnlyList<string> Prefectures { get; } =
-    //[
-    //    "北海道",
-    //    "青森県",
-    //    "岩手県",
-    //    "宮城県",
-    //    "秋田県",
-    //    "山形県",
-    //    "福島県",
-    //    "茨城県",
-    //    "栃木県",
-    //    "群馬県",
-    //    "埼玉県",
-    //    "千葉県",
-    //    "東京都",
-    //    "神奈川県",
-    //    "新潟県",
-    //    "富山県",
-    //    "石川県",
-    //    "福井県",
-    //    "山梨県",
-    //    "長野県",
-    //    "岐阜県",
-    //    "静岡県",
-    //    "愛知県",
-    //    "三重県",
-    //    "滋賀県",
-    //    "京都府",
-    //    "大阪府",
-    //    "兵庫県",
-    //    "奈良県",
-    //    "和歌山県",
-    //    "鳥取県",
-    //    "島根県",
-    //    "岡山県",
-    //    "広島県",
-    //    "山口県",
-    //    "徳島県",
-    //    "香川県",
-    //    "愛媛県",
-    //    "高知県",
-    //    "福岡県",
-    //    "佐賀県",
-    //    "長崎県",
-    //    "熊本県",
-    //    "大分県",
-    //    "宮崎県",
-    //    "鹿児島県",
-    //    "沖縄県"
-    //];
-
     public MainWindow()
     {
         InitializeComponent();
         DataContext = new MainViewModel();
     }
 
+    private bool _scrollBarInitialized = false;
+
     private void OnPrefectureSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         SelectionText.Text = PrefectureComboBox.SelectedItem is string prefecture
             ? $"選択中: {prefecture}"
             : "まだ選択されていません。";
+    }
+
+    private void UpdateVerticalScrollBar()
+    {
+        var contentHeight = this.ValuesItemsControl.ActualHeight;
+        var viewportHeight = this.ValuesScrollViewer.ActualHeight;
+
+        this.VerticalScrollBar.ViewportSize = viewportHeight;
+        this.VerticalScrollBar.Maximum = Math.Max(0, contentHeight - viewportHeight);
+    }
+
+    private void Window_LayoutUpdated(object sender, EventArgs e)
+    {
+        if (!this._scrollBarInitialized)
+        {
+            Debug.WriteLine($"LayoutUpdated: ValuesItemsControl.ActualHeight={this.ValuesItemsControl.ActualHeight}, ValuesScrollViewer.ActualHeight={this.ValuesScrollViewer.ActualHeight}");
+
+            this.ValuesScrollViewer.UpdateLayout();
+            UpdateVerticalScrollBar();
+
+            this._scrollBarInitialized = true;
+        }
+    }
+
+    private void VerticalScrollBar_Scroll(object sender, System.Windows.Controls.Primitives.ScrollEventArgs e)
+    {
+        this.ValuesScrollViewer.ScrollToVerticalOffset(e.NewValue);
+    }
+
+    private void ValuesScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        UpdateVerticalScrollBar();
+    }
+
+    private void ValuesScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+    {
+        this.VerticalScrollBar.Value = this.ValuesScrollViewer.VerticalOffset;
     }
 }
